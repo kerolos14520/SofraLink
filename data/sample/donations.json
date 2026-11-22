@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "id": 1001,
+      "donorName": "Sample Donor A",
+      "category": "Rice",
+      "totalQuantity": 100,
+      "availableQuantity": 100,
+      "unit": "kg",
+      "expiryDate": "2027-06-30",
+      "location": "Sample Collection Center",
+      "productBatchNumber": "SIM-RICE-001",
+      "isSealed": true,
+      "isNonPerishable": true,
+      "status": "RECEIVED",
+      "createdAt": "2026-11-22T12:00:00"
+    }
+  ]
+}
