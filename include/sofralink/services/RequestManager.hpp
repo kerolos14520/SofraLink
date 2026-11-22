@@ -17,5 +17,15 @@ public:
     std::vector<FoodRequest> getAllRequests() const;
     std::vector<FoodRequest> getPendingRequests() const;
     void replaceAllRequests(const std::vector<FoodRequest>& requests);
+
+private:
+    // Lookup helpers: linear search by id; return end() when not found.
+    std::vector<FoodRequest>::iterator findById(int requestId);
+    std::vector<FoodRequest>::const_iterator findById(int requestId) const;
+
+    // The Validation object must outlive this RequestManager.
+    const Validation& validation_;
+    std::vector<FoodRequest> requests_;
+    int nextId_{1};
 };
 } // namespace sofralink
