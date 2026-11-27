@@ -1,49 +1,15 @@
 #include "sofralink/services/Validation.hpp"
 
-#include <ctime>
-#include <iomanip>
-#include <sstream>
 #include <string>
+
+#include "DateUtils.hpp"
 
 namespace sofralink {
 namespace {
 
-bool isValidIsoDate(const std::string& value) {
-    if (value.size() != 10 || value[4] != '-' || value[7] != '-') {
-        return false;
-    }
-
-    for (std::size_t i = 0; i < value.size(); ++i) {
-        if (i != 4 && i != 7 && (value[i] < '0' || value[i] > '9')) {
-            return false;
-        }
-    }
-
-    const int year = std::stoi(value.substr(0, 4));
-    const int month = std::stoi(value.substr(5, 2));
-    const int day = std::stoi(value.substr(8, 2));
-    if (month < 1 || month > 12) {
-        return false;
-    }
-
-    const bool leapYear = year % 400 == 0 || (year % 4 == 0 && year % 100 != 0);
-    const int daysPerMonth[] = {31, leapYear ? 29 : 28, 31, 30, 31, 30,
-                                31, 31, 30, 31, 30, 31};
-    return day >= 1 && day <= daysPerMonth[month - 1];
-}
-
-std::string todayIsoDate() {
-    const std::time_t now = std::time(nullptr);
-    std::tm localDate{};
-#ifdef _WIN32
-    localtime_s(&localDate, &now);
-#else
-    localtime_r(&now, &localDate);
-#endif
-    std::ostringstream output;
-    output << std::put_time(&localDate, "%Y-%m-%d");
-    return output.str();
-}
+using detail::isBlank;
+using detail::isValidIsoDate;
+using detail::todayIsoDate;
 
 void addError(ValidationResult& result, const std::string& message) {
     result.isValid = false;
@@ -55,16 +21,16 @@ void addError(ValidationResult& result, const std::string& message) {
 ValidationResult Validation::validateDonation(const Donation& donation) const {
     ValidationResult result;
 
-    if (donation.donorName.empty()) {
+    if (isBlank(donation.donorName)) {
         addError(result, "donorName must not be empty.");
     }
-    if (donation.category.empty()) {
+    if (isBlank(donation.category)) {
         addError(result, "category must not be empty.");
     }
-    if (donation.unit.empty()) {
+    if (isBlank(donation.unit)) {
         addError(result, "unit must not be empty.");
     }
-    if (donation.location.empty()) {
+    if (isBlank(donation.location)) {
         addError(result, "location must not be empty.");
     }
     if (!donation.isSealed) {
@@ -86,7 +52,7 @@ ValidationResult Validation::validateDonation(const Donation& donation) const {
         addError(result, "expiryDate must not be in the past.");
     }
 
-    if (donation.productBatchNumber.empty()) {
+    if (isBlank(donation.productBatchNumber)) {
         result.warnings.push_back("productBatchNumber is missing.");
     }
 
@@ -96,16 +62,16 @@ ValidationResult Validation::validateDonation(const Donation& donation) const {
 ValidationResult Validation::validateFoodRequest(const FoodRequest& request) const {
     ValidationResult result;
 
-    if (request.organizationName.empty()) {
+    if (isBlank(request.organizationName)) {
         addError(result, "organizationName must not be empty.");
     }
-    if (request.category.empty()) {
+    if (isBlank(request.category)) {
         addError(result, "category must not be empty.");
     }
-    if (request.unit.empty()) {
+    if (isBlank(request.unit)) {
         addError(result, "unit must not be empty.");
     }
-    if (request.location.empty()) {
+    if (isBlank(request.location)) {
         addError(result, "location must not be empty.");
     }
     if (request.requestedQuantity <= 0) {
