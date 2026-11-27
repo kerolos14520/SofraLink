@@ -7,6 +7,7 @@
 namespace sofralink {
 class DonationManager {
 public:
+    // `validation` is stored by reference: it must outlive this DonationManager.
     explicit DonationManager(const Validation& validation);
     bool createDonation(const Donation&, Donation& createdDonation, std::string& errorMessage);
     bool updateDonation(int donationId, const Donation& updatedDonation, std::string& errorMessage);
@@ -17,5 +18,14 @@ public:
     std::vector<Donation> getAllDonations() const;
     std::vector<Donation> getAvailableDonations() const;
     void replaceAllDonations(const std::vector<Donation>& donations);
+
+private:
+    Donation* findDonation(int donationId);
+    const Donation* findDonation(int donationId) const;
+    bool validateCandidate(const Donation& candidate, std::string& errorMessage) const;
+
+    const Validation& validation_;
+    std::vector<Donation> donations_;
+    int nextId_{1};
 };
 } // namespace sofralink
